@@ -1,0 +1,43 @@
+import com.jozedix.android.samples.Deps
+
+apply from: "$rootDir/config/dependencies/feature_dependencies.gradle"
+
+android {
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api project(":components")
+
+    api Deps.kotlin
+    api Deps.kotlinCoroutines
+    api Deps.kotlinCoroutinesAndroid
+    api Deps.Libs.kotlinSerialization
+
+    api Deps.Android.appCompat
+    api Deps.Android.androidKTX
+    api Deps.Android.constraintLayout
+    api Deps.Android.material
+    api Deps.Android.navigationFragment
+    api Deps.Android.navigationUI
+    api Deps.Libs.workManager
+    api Deps.Libs.workManagerKTX
+    api Deps.Libs.lifecycleExtensions
+    api Deps.Libs.lifecycleViewmodel
+    api Deps.Libs.lifecycleLivedata
+    api Deps.Libs.roomRuntime
+    api Deps.Libs.roomKtx
+
+    api Deps.Libs.coil
+    api Deps.Libs.koin
+    api Deps.Libs.koinScope
+    api Deps.Libs.koinViewModel
+    api Deps.Libs.retrofit
+    api Deps.Libs.retrofitKotlixConverter
+    api Deps.Libs.okHttp
+    api Deps.Libs.okHttpInterceptor
+}

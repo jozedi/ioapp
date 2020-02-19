@@ -1,0 +1,72 @@
+apply plugin: 'com.android.library'
+
+apply from: "$rootDir/config/dependencies/android_dependencies.gradle"
+
+def env = new Properties()
+
+if (rootProject.file("$rootDir/config/env.properties").exists())
+    env.load(new FileInputStream(rootProject.file("$rootDir/config/env.properties")))
+
+android {
+    signingConfigs {
+        debug {
+            keyAlias env['keyAliasDebug']
+            keyPassword env['keyPasswordDebug']
+            storeFile file(env['storeFileDebug'])
+            storePassword env['storePasswordDebug']
+        }
+        release {
+            keyAlias env['keyAliasRelease']
+            keyPassword env['keyPasswordRelease']
+            storeFile file(env['storeFileRelease'])
+            storePassword env['storePasswordRelease']
+        }
+    }
+    flavorDimensions "PROFILE"
+    productFlavors {
+        user {
+            dimension "PROFILE"
+        }
+        bussines {
+            dimension "PROFILE"
+        }
+    }
+    buildTypes {
+        dev {
+            initWith debug
+
+            productFlavors.user.signingConfig signingConfigs.debug
+            productFlavors.bussines.signingConfig signingConfigs.debug
+
+            buildConfigField 'String', 'BASE_URL', quote(env['baseUrlDev'])
+        }
+        staging {
+            minifyEnabled false
+            debuggable true
+
+            matchingFallbacks = ['release']
+
+            buildConfigField 'String', 'BASE_URL', quote(env['baseUrlStaging'])
+        }
+        production {
+            zipAlignEnabled true
+            minifyEnabled true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
+
+            productFlavors.user.signingConfig signingConfigs.release
+            productFlavors.bussines.signingConfig signingConfigs.release
+
+            buildConfigField 'String', 'BASE_URL', quote(env['baseUrlProduction'])
+        }
+    }
+    variantFilter { variant ->
+        def isDebug = variant.buildType.name.contains('debug')
+        if (isDebug) setIgnore(true)
+    }
+}
+
+private static quote(String input) {
+    return "\"" + input + "\""
+}

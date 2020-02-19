@@ -1,0 +1,32 @@
+import com.jozedix.android.samples.Config
+import com.jozedix.android.samples.Deps
+
+buildscript {
+    ext.kotlin_version = '1.3.50'
+
+    repositories {
+        google()
+        jcenter()
+
+    }
+    dependencies {
+        classpath Deps.BuildPlugins.androidGradle
+        classpath Deps.BuildPlugins.kotlinGradlePlugin
+        classpath Deps.BuildPlugins.kotlinSerializationPlugin
+        classpath Deps.BuildPlugins.safeArgsPlugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url Config.Repository.google }
+        maven { url Config.Repository.kotlinx }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

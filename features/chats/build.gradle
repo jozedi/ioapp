@@ -1,0 +1,21 @@
+import com.jozedix.android.samples.Deps
+
+apply from: "$rootDir/config/dependencies/feature_dependencies.gradle"
+
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+android {
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api project(":core")
+
+    kapt Deps.Libs.roomCompiler
+}

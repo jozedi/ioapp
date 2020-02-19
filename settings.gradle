@@ -1,0 +1,11 @@
+include ':core', ':components'
+project(":core").projectDir = file("${rootDir}/libraries/core")
+project(":components").projectDir = file("${rootDir}/libraries/components")
+
+include ':app', ':shared', ':chats', ':status', ':calls'
+project(":shared").projectDir = file("${rootDir}/features/shared")
+project(":chats").projectDir = file("${rootDir}/features/chats")
+project(":status").projectDir = file("${rootDir}/features/status")
+project(":calls").projectDir = file("${rootDir}/features/calls")
+
+rootProject.name='ioapp'

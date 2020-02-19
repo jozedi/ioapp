@@ -1,0 +1,13 @@
+import com.jozedix.android.samples.Config
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion Config.compileSdk
+    defaultConfig {
+        minSdkVersion Config.minimumSdk
+        targetSdkVersion Config.targetSdk
+        testInstrumentationRunner Config.testInstrumentationRunner
+    }
+}

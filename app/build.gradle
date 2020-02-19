@@ -1,0 +1,91 @@
+import com.jozedix.android.samples.Config
+import com.jozedix.android.samples.Deps
+
+apply from: "$rootDir/config/dependencies/app_dependencies.gradle"
+
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+android {
+    defaultConfig {
+        applicationId Config.applicationId
+        versionCode generateVersionCode()
+        versionName generateVersionName()
+        multiDexEnabled true
+
+        resConfigs("es", "en")
+
+        manifestPlaceholders = [appName: Config.appName]
+        resValue("string", "app_name", "${Config.appName}")
+    }
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+    androidExtensions {
+        experimental = true
+    }
+    dataBinding {
+        enabled true
+    }
+    lintOptions {
+        lintConfig file("$rootDir/config/filters/lint.xml")
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        checkAllWarnings true
+        warningsAsErrors false
+        noLines true
+        showAll true
+    }
+    renameOutputApk()
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":chats")
+    implementation project(":status")
+    implementation project(":calls")
+
+    implementation Deps.Android.multidex
+    implementation Deps.Libs.stetho
+
+    kapt Deps.Libs.roomCompiler
+}
+
+private static quote(String input) {
+    return "\"" + input + "\""
+}
+
+private String generateVersionName() {
+    return "${Config.versionMajor}.${Config.versionMinor}.${Config.versionPatch}"
+}
+
+private Integer generateVersionCode() {
+    return Config.minimumSdk * 10000000 + Config.versionMajor * 10000 + Config.versionMinor * 100 + Config.versionPatch
+}
+
+def renameOutputApk() {
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            def project = Config.appName.toLowerCase()
+            def environment = variant.flavorName
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode
+            def date = new Date().format('yyyyMMdd', TimeZone.getTimeZone("UTC"))
+            def buildType = variant.variantData.variantConfiguration.buildType.name
+            def apkName = "${project}-${environment}-${versionName}-${versionCode}-${date}-${buildType}.apk"
+            outputFileName = apkName
+            variant.buildConfigField("String", "OUTPUT_APK_NAME", quote(apkName))
+            variant.resValue("string", "app_version", "${variant.versionName}")
+        }
+    }
+}

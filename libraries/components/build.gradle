@@ -1,0 +1,12 @@
+apply from: "$rootDir/config/dependencies/feature_dependencies.gradle"
+
+android {
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
